@@ -24,10 +24,18 @@
       const SHIP_HEIGHT = 20;
       const SHIP_SPEED = 5;
 
-      const BULLET_WIDTH = 2;
-      const BULLET_HEIGHT = 5;
-      const BULLET_SPEED = 10;
+      const ALIEN_WIDTH = 30;
+      const ALIEN_HEIGHT = 20;
+      const ALIEN_MARGIN = 10;
+
+      const BULLET_WIDTH = 3;
+      const BULLET_HEIGHT = 10;
+      const BULLET_SPEED = 15;
       const TIME_BETWEEN_SHOTS = 10;
+
+      const ALIEN_COLOR = "white";
+      const SHIP_COLOR = "LimeGreen";
+      const BULLET_COLOR = "green";
 
       let stage;
 
@@ -40,7 +48,7 @@
 
       let bulletTime = TIME_BETWEEN_SHOTS;
 
-      let aliens = [];
+      let aliens = []; //55 total (as in the original)
       let bullets = [];
 
       document.onkeydown = handleKeyDown;
@@ -51,10 +59,34 @@
         stage = new createjs.Stage("gameCanvas");
 
         playerShip = new createjs.Shape();
-        playerShip.graphics.beginFill("LimeGreen").drawRect(0, 0, SHIP_WIDTH, SHIP_HEIGHT);
+        playerShip.graphics.beginFill(SHIP_COLOR).drawRect(0, 0, SHIP_WIDTH, SHIP_HEIGHT);
         playerShip.x = (CANVAS_WIDTH - SHIP_WIDTH) / 2;
         playerShip.y = CANVAS_HEIGHT - SHIP_HEIGHT - 20;
         stage.addChild(playerShip);
+
+        let prevAlienX = -1 * ALIEN_WIDTH;
+        let prevAlienY = 50;
+        for (let i = 0; i < 55; i++) {
+          let alien = new createjs.Shape();
+          alien.graphics.beginFill(ALIEN_COLOR).drawRect(0, 0, ALIEN_WIDTH, ALIEN_HEIGHT);
+
+          if (prevAlienX + ALIEN_WIDTH * 2 + ALIEN_MARGIN >= CANVAS_WIDTH - (CANVAS_WIDTH / 3)) {
+            alien.x = ALIEN_MARGIN;
+            prevAlienX = alien.x;
+
+            alien.y = prevAlienY + ALIEN_HEIGHT + ALIEN_MARGIN;
+            prevAlienY = alien.y;
+          }
+          else {
+            alien.x = prevAlienX + ALIEN_WIDTH + ALIEN_MARGIN;
+            prevAlienX = alien.x;
+            
+            alien.y = prevAlienY;
+          }
+
+          stage.addChild(alien);
+          aliens.push(alien);
+        }
 
         stage.update();
       }
@@ -110,15 +142,15 @@
           playerShip.x -= SHIP_SPEED;
         }
 
-        if (userR && playerShip.x < CANVAS_WIDTH) {
+        if (userR && playerShip.x + SHIP_WIDTH < CANVAS_WIDTH) {
           playerShip.x += SHIP_SPEED;
         }
 
         if (bulletTime <= 0) {
           if (userShoot) {
             let newBullet = new createjs.Shape();
-            newBullet.graphics.beginFill("white").drawRect(0, 0, BULLET_WIDTH, BULLET_HEIGHT);
-            newBullet.x = playerShip.x;
+            newBullet.graphics.beginFill(BULLET_COLOR).drawRect(0, 0, BULLET_WIDTH, BULLET_HEIGHT);
+            newBullet.x = playerShip.x + (SHIP_WIDTH / 2) - 1; //-1 is more centered
             newBullet.y = playerShip.y;
 
             bullets.push(newBullet);
