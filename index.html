@@ -22,11 +22,13 @@
 
       const SHIP_WIDTH = 30;
       const SHIP_HEIGHT = 20;
-      const SHIP_SPEED = 5;
+      const SHIP_SPEED = 7;
 
       const ALIEN_WIDTH = 30;
       const ALIEN_HEIGHT = 20;
       const ALIEN_MARGIN = 10;
+      const ALIEN_SPEED = 5;
+      const ALIEN_DELAY = 2;
 
       const BULLET_WIDTH = 3;
       const BULLET_HEIGHT = 10;
@@ -47,6 +49,9 @@
       let shipHP = 3;
 
       let bulletTime = TIME_BETWEEN_SHOTS;
+      let alienTime = ALIEN_DELAY;
+
+      let alienDirection = 'R';
 
       let aliens = []; //55 total (as in the original)
       let bullets = [];
@@ -163,6 +168,13 @@
           bulletTime--;
 
         updateBullets();
+        if (alienTime <= 0) {
+          updateAliens();
+          alienTime = ALIEN_DELAY;
+        }
+        else 
+          alienTime--;
+
         stage.update();
       }
 
@@ -178,6 +190,49 @@
             stage.removeChild(bullet);
           }
         }
+      }
+
+      function updateAliens() {
+        if (alienDirection == 'R') {
+          for (let i = aliens.length - 1; i >= 0; i--) {
+            if (aliens[i] === "Undefined")
+              continue;
+
+            let alien = aliens[i];
+
+            if (alien.x + ALIEN_SPEED <= CANVAS_WIDTH - ALIEN_MARGIN - ALIEN_WIDTH) {
+              alien.x += ALIEN_SPEED;
+            }
+            else {
+              flipAliens('L');
+              break;
+            }
+          }
+        }
+
+        else {
+          for (let i = 0; i < aliens.length; i++) {
+            if (aliens[i] === "Undefined")
+              continue;
+
+            let alien = aliens[i];
+
+            if (alien.x - ALIEN_SPEED >= ALIEN_MARGIN) {
+              alien.x -= ALIEN_SPEED;
+            }
+            else {
+              flipAliens('R');
+              break;
+            }
+          }
+        }
+      }
+
+      function flipAliens(direction) {
+        for (let alien of aliens) {
+          alien.y += ALIEN_SPEED;
+        }
+        alienDirection = direction;
       }
     </script>
   </head>
