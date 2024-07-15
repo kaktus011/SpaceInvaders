@@ -9,6 +9,9 @@
       margin: 0 auto;
       }
     </style>
+  </head>
+  <body onload="init();">
+    <canvas id="gameCanvas" width="700" height="750"></canvas>
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
     <script>
       const KEYCODE_SPACE = 32;
@@ -17,23 +20,25 @@
       const KEYCODE_D = 68;
       const KEYCODE_RIGHT = 39;
 
-      let stage; //main display stage
-      const CANVAS_WIDTH = 800;
-      const CANVAS_HEIGHT = 600;
+      let stage;
+      const CANVAS_WIDTH = 700;
+      const CANVAS_HEIGHT = 750;
       let userR; //going right
       let userL; //going left
       let userShoot;
 
-      let playerShip;  //user space ship
-      let shipHP;    //space ship health, max is 3
+      let playerShip;
+      let shipHP = 3;
       const SHIP_WIDTH = 30;
       const SHIP_HEIGHT = 20;
 
-      let aliens;//aliens array
+      let aliens = [];
+      let bullets = [];
 
       document.onkeydown = handleKeyDown;
       document.onkeyup = handleKeyUp;
       createjs.Ticker.addEventListener("tick", tick);
+
 
       function init() {
         stage = new createjs.Stage("gameCanvas");
@@ -54,6 +59,10 @@
         }
 
         switch (e.keyCode) {
+          case KEYCODE_SPACE:
+            shootHeld = true;
+            return false;
+
           case KEYCODE_A:
           case KEYCODE_LEFT:
             userL = true;
@@ -73,6 +82,10 @@
         }
 
         switch (e.keyCode) {
+          case KEYCODE_SPACE:
+            shootHeld = false;
+            break;
+
           case KEYCODE_A:
           case KEYCODE_LEFT:
             userL = false;
@@ -94,11 +107,12 @@
           playerShip.x += 5;
         }
 
+        if (userShoot) {
+
+        }
+
         stage.update();
       }
     </script>
-  </head>
-  <body onload="init();">
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
   </body>
 </html>
