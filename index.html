@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>my first game</title>
+    <style>
+      canvas {
+      background: #000;
+      display: block;
+      margin: 0 auto;
+      }
+    </style>
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script>
+      const KEYCODE_SPACE = 32;
+      const KEYCODE_A = 65;
+      const KEYCODE_LEFT = 37;
+      const KEYCODE_D = 68;
+      const KEYCODE_RIGHT = 39;
+
+      let stage; //main display stage
+      const CANVAS_WIDTH = 800;
+      const CANVAS_HEIGHT = 600;
+      let userR; //going right
+      let userL; //going left
+      let userShoot;
+
+      let playerShip;  //user space ship
+      let shipHP;    //space ship health, max is 3
+      const SHIP_WIDTH = 30;
+      const SHIP_HEIGHT = 20;
+
+      let aliens;//aliens array
+
+      document.onkeydown = handleKeyDown;
+      document.onkeyup = handleKeyUp;
+      createjs.Ticker.addEventListener("tick", tick);
+
+      function init() {
+        stage = new createjs.Stage("gameCanvas");
+
+        playerShip = new createjs.Shape();
+        playerShip.graphics.beginFill("LimeGreen").drawRect(0, 0, SHIP_WIDTH, SHIP_HEIGHT);
+        playerShip.x = (CANVAS_WIDTH - SHIP_WIDTH) / 2;
+        playerShip.y = CANVAS_HEIGHT - SHIP_HEIGHT - 20;
+        stage.addChild(playerShip);
+
+        stage.update();
+      }
+
+      function handleKeyDown(e) {
+        //cross browser problems
+        if (!e) {
+          var e = window.event;
+        }
+
+        switch (e.keyCode) {
+          case KEYCODE_A:
+          case KEYCODE_LEFT:
+            userL = true;
+            return false;
+
+          case KEYCODE_D:
+          case KEYCODE_RIGHT:
+            userR = true;
+            return false;
+        }
+      }
+
+      function handleKeyUp(e) {
+        //cross browser problems
+        if (!e) {
+          var e = window.event;
+        }
+
+        switch (e.keyCode) {
+          case KEYCODE_A:
+          case KEYCODE_LEFT:
+            userL = false;
+            break;
+
+          case KEYCODE_D:
+          case KEYCODE_RIGHT:
+            userR = false;
+            break;
+        }
+      }
+
+      function tick(event) {
+        if (userL && playerShip.x > 0) {
+          playerShip.x -= 5;
+        }
+
+        if (userR && playerShip.x < CANVAS_WIDTH) {
+          playerShip.x += 5;
+        }
+
+        stage.update();
+      }
+    </script>
+  </head>
+  <body onload="init();">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+  </body>
+</html>
