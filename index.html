@@ -38,6 +38,7 @@
       const ALIEN_COLOR = "white";
       const SHIP_COLOR = "LimeGreen";
       const BULLET_COLOR = "green";
+      const UNDF = "Undefined";
 
       let stage;
 
@@ -46,6 +47,7 @@
       let userShoot;
 
       let playerShip;
+
       let shipHP = 3;
 
       let bulletTime = TIME_BETWEEN_SHOTS;
@@ -168,6 +170,7 @@
           bulletTime--;
 
         updateBullets();
+        checkCollision();
         if (alienTime <= 0) {
           updateAliens();
           alienTime = ALIEN_DELAY;
@@ -182,12 +185,15 @@
         if (bullets.length == 0)
           return;
 
-        for (let bullet of bullets) {
+        for (let i = 0; i < bullets.length; i++) {
+          let bullet = bullets[i];
+          if (bullet == UNDF)
+            continue;
+
           bullet.y -= BULLET_SPEED;
-          //TODO check for target hit here
-          
-          if (bullet.y <= 0 && stage.contains(bullet)) {
+          if (bullet.y <= 20 && stage.contains(bullet)) {
             stage.removeChild(bullet);
+            bullets[i] = UNDF;
           }
         }
       }
@@ -195,7 +201,7 @@
       function updateAliens() {
         if (alienDirection == 'R') {
           for (let i = aliens.length - 1; i >= 0; i--) {
-            if (aliens[i] === "Undefined")
+            if (aliens[i] === UNDF)
               continue;
 
             let alien = aliens[i];
@@ -212,7 +218,7 @@
 
         else {
           for (let i = 0; i < aliens.length; i++) {
-            if (aliens[i] === "Undefined")
+            if (aliens[i] === UNDF)
               continue;
 
             let alien = aliens[i];
@@ -233,6 +239,33 @@
           alien.y += ALIEN_SPEED;
         }
         alienDirection = direction;
+      }
+
+      function checkCollision() {
+        for (let i = 0; i < bullets.length; i++) {
+          let bullet = bullets[i];
+          if (bullet == UNDF)
+            continue;
+
+          let bulletX = bullet.x;
+          let bulletY = bullet.y;
+          for (let k = 0; k < aliens.length; k++) {
+            let alien = aliens[k];
+            if (alien == UNDF)
+              continue;
+
+            console.log(`bullet ${bulletX} ${bulletY} alien ${alien.x} ${alien.y}`);
+            if (bulletX <= alien.x && bulletX >= alien.x + ALIEN_WIDTH && bulletY <= alien.y + ALIEN_HEIGHT) {
+              stage.removeChild(alien);
+              stage.removeChild(bullet);
+
+              aliens[k] = UNDF;
+              bullets[i] = UNDF;
+
+              return;
+            }
+          }
+        }
       }
     </script>
   </head>
